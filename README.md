@@ -1,6 +1,8 @@
-# ColorApp
-
-![ColorApp banner image](./Editor/Resources/Images/ColorAppIcon.png)
+<h1 align="center">
+<img src="./Editor/Resources/Images/ColorAppIcon.png" alt="SixLabors.ImageSharp" width="600"/>
+<br/>
+ColorApp
+</h1>
 
 ## What is CalorApp
 Custom editor tool for Unity 3D that allows you to create and edit color palettes and apply them to graphics in your project
@@ -29,5 +31,7 @@ For further assistance or inquiries, please contact our support team at jairoand
 
 ## Examples
 
-![Light example image](./Samples/Images/Examples/Light.jpg)
-![Dark example image](./Samples/Images/Examples/Dark.jpg)
+<p float="left">
+  <img src="./Samples/Images/Examples/Light.jpg" width="400" />
+  <img src="/Samples/Images/Examples/Dark.jpg" width="400" /> 
+</p>
