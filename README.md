@@ -26,3 +26,8 @@ To create color palettes you must assign a configuration file, you can create on
 
 ## Support and Contact
 For further assistance or inquiries, please contact our support team at jairoandrety@hotmail.com
+
+## Examples
+
+![Light example image](./Samples/Images/Examples/Light.jpg)
+![Dark example image](./Samples/Images/Examples/Dark.jpg)
