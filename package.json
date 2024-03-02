@@ -1,0 +1,18 @@
+﻿{
+  "name": "com.jairoandrety.colorapp",
+  "version": "1.0.2",
+  "displayName": "Color App",
+  "description": "Useful tool that helps create, modify and manage color palettes or color themes to assign to scenes",
+  "unity": "2017.1",
+ "keywords":
+ [
+    "Themes",
+    "Palette Color",
+    "Color"
+  ],
+  "author": {
+    "name": "Jairoandrety",
+    "email": "jairoandrety@hotmail.com",
+    "url": "https://www.Jairoandrety.com"
+  }
+}
