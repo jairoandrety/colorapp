@@ -28,10 +28,21 @@ namespace Jairoandrety.ColorApp
 
         public static void CreatePaletteSetup()
         {
+            VerifyResourcesFolder();
             ColorPaletteSetup newPalette = ScriptableObject.CreateInstance<ColorPaletteSetup>();
             AssetDatabase.CreateAsset(newPalette, GetColorAppData().UseCustomPalette ? GetColorAppData().CurrentPalettePath : "Assets/Resources/PaletteTargetSetup.asset");
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+        }
+
+        private static void VerifyResourcesFolder()
+        {
+            bool folderExist = Directory.Exists("Assets/Resources");
+
+            if (!folderExist)
+            {
+                Directory.CreateDirectory("Assets/Resources");
+            }
         }
 
         //public static void SaveColorPaletteSetup(ColorPaletteSetup colorPaletteSetup)

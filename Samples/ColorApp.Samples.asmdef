@@ -1,0 +1,16 @@
+{
+    "name": "ColorApp.Samples",
+    "rootNamespace": "",
+    "references": [
+        "GUID:571b348fd62363e4cad48d7720969fc4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
