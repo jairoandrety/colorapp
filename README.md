@@ -4,6 +4,8 @@
 ColorApp
 </h1>
 
+Forum Thread: https://forum.unity.com/threads/color-app-plugin-open-source.1557404/
+
 ## What is CalorApp
 Custom editor tool for Unity 3D that allows you to create and edit color palettes and apply them to graphics in your project
 
