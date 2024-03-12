@@ -8,7 +8,6 @@ namespace Jairoandrety.ColorApp
     public class Colorizer : MonoBehaviour
     {
         public ColorizerData colorizerData;
-
         public virtual void SetColor(Color color) { }
     }
 

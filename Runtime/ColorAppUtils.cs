@@ -1,44 +1,48 @@
-﻿using Jairoandrety.ColorApp;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace Jairoandrety.ColorApp
 {
     public static class ColorAppUtils
     {
-        #region Save And Load Setup
+        private static string _palettePath = "PaletteTargetSetup";
+        public static string PalettePath => _palettePath;
+
         public static bool ValidatePaletteSetup()
         {
-            return GetColorAppData().UseCustomPalette ? File.Exists(GetColorAppData().CurrentPalettePath) : Resources.Load<ColorPaletteSetup>("PaletteTargetSetup") != null;
+            return Resources.Load<ColorPaletteSetup>(PalettePath) != null;
         }
 
         public static ColorPaletteSetup GetColorPaletteSetup()
         {
-            ColorPaletteSetup paleteLoaded = GetColorAppData().UseCustomPalette ? AssetDatabase.LoadAssetAtPath<ColorPaletteSetup>(GetColorAppData().CurrentPalettePath) : Resources.Load<ColorPaletteSetup>("PaletteTargetSetup");
-
+            ColorPaletteSetup paleteLoaded = Resources.Load<ColorPaletteSetup>(PalettePath);
+#if UNITY_EDITOR
             if (paleteLoaded == null)
             {
                 CreatePaletteSetup();
             }
-
+#endif
             return paleteLoaded;
         }
 
+#if UNITY_EDITOR
         public static void CreatePaletteSetup()
         {
             VerifyResourcesFolder();
             ColorPaletteSetup newPalette = ScriptableObject.CreateInstance<ColorPaletteSetup>();
-            AssetDatabase.CreateAsset(newPalette, GetColorAppData().UseCustomPalette ? GetColorAppData().CurrentPalettePath : "Assets/Resources/PaletteTargetSetup.asset");
+            AssetDatabase.CreateAsset(newPalette, string.Format("Assets/Resources/{0}.asset", PalettePath));
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
 
+
         private static void VerifyResourcesFolder()
         {
             bool folderExist = Directory.Exists("Assets/Resources");
-
             if (!folderExist)
             {
                 Directory.CreateDirectory("Assets/Resources");
@@ -67,9 +71,7 @@ namespace Jairoandrety.ColorApp
         //        AssetDatabase.Refresh();
         //    }
         //}
-        #endregion
 
-        #region ColorAppData
         public static ColorAppData GetColorAppData()
         {
             string path = "Runtime/Data/ColorAppData.asset";
@@ -82,7 +84,6 @@ namespace Jairoandrety.ColorApp
 
             return null;
         }
-        #endregion
 
         public static ColorAppData GetColorAppDataFromPath(string path)
         {
@@ -125,8 +126,6 @@ namespace Jairoandrety.ColorApp
             }
             return names;
         }
-
-
-        
+#endif
     }
 }

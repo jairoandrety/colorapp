@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace Jairoandrety.ColorApp
@@ -8,7 +10,7 @@ namespace Jairoandrety.ColorApp
     {
         public int colorPaletteSelected = 0;
     }
-
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(ColorizerHandlerData))]
     public class ColorizerHanlerDataDrawer: PropertyDrawer
     {
@@ -36,4 +38,5 @@ namespace Jairoandrety.ColorApp
             return height;
         }
     }
+#endif
 }

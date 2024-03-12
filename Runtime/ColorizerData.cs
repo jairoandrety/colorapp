@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace Jairoandrety.ColorApp
@@ -9,6 +11,7 @@ namespace Jairoandrety.ColorApp
         public int selectedIndex = 0;
     }
 
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(ColorizerData))]
     public class ColorizerDrawer : PropertyDrawer
     {
@@ -18,9 +21,6 @@ namespace Jairoandrety.ColorApp
             EditorGUI.BeginProperty(position, label, property);
 
             SerializedProperty colorOptionProperty = property.FindPropertyRelative("selectedIndex");
-
-            //EditorGUI.PropertyField(position, colorOptionProperty, label);
-
             float lineHeight = EditorGUIUtility.singleLineHeight;
             float popupPos = position.y;
             enabled = ColorAppUtils.ColorLabels().Count > 0;
@@ -39,4 +39,5 @@ namespace Jairoandrety.ColorApp
             return height;
         }
     }
+#endif
 }

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace Jairoandrety.ColorApp
@@ -12,6 +14,7 @@ namespace Jairoandrety.ColorApp
         public Color color;
     }
 
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(ColorPallete))]
     public class ColorPaletteDrawer : PropertyDrawer
     {
@@ -48,4 +51,5 @@ namespace Jairoandrety.ColorApp
             return height - lineHeight;
         }
     }
+#endif
 }

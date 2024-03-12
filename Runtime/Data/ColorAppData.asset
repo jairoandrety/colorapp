@@ -12,15 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2620788017253f44094e5566bc5154cb, type: 3}
   m_Name: ColorAppData
   m_EditorClassIdentifier: 
-  defaultPalettePath: PaletteTargetSetup
-  useCustomPalette: 0
-  customPalettePath: 
-  colorLabels:
+  _colorLabels:
   - PrimaryColor
   - SecondColor
   - ThirdColor
-  - ThirdFontColor
   - PrimaryFontColor
   - SecondFontColor
-  - ThirdFontColor
-  - BackgroundColor
