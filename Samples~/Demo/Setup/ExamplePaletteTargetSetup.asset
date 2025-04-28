@@ -21,16 +21,12 @@ MonoBehaviour:
       color: {r: 0.90196085, g: 0.90196085, b: 0.90196085, a: 1}
     - label: ThirdColor
       color: {r: 1, g: 0.7254902, b: 0.27450982, a: 1}
-    - label: ThirdFontColor
-      color: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
     - label: PrimaryFontColor
-      color: {r: 0.9960785, g: 0.627451, b: 0, a: 1}
+      color: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
     - label: SecondFontColor
-      color: {r: 0.27450982, g: 0.27450982, b: 0.27450982, a: 1}
-    - label: BackgroundColor
-      color: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
-    - label: Icons
-      color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+      color: {r: 0.9960785, g: 0.627451, b: 0, a: 1}
+    - label: Background
+      color: {r: 1, g: 1, b: 1, a: 1}
   - paletteName: Dark
     colors:
     - label: PrimaryColor
@@ -39,13 +35,9 @@ MonoBehaviour:
       color: {r: 0.90196085, g: 0.90196085, b: 0.90196085, a: 1}
     - label: ThirdColor
       color: {r: 1, g: 0.7254902, b: 0.27450982, a: 1}
-    - label: ThirdFontColor
-      color: {r: 1, g: 1, b: 1, a: 1}
     - label: PrimaryFontColor
-      color: {r: 0.9960785, g: 0.627451, b: 0, a: 1}
+      color: {r: 1, g: 1, b: 1, a: 1}
     - label: SecondFontColor
-      color: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    - label: BackgroundColor
-      color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
-    - label: Icons
       color: {r: 0.9960785, g: 0.627451, b: 0, a: 1}
+    - label: Background
+      color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}

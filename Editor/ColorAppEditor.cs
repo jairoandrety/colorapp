@@ -7,7 +7,6 @@ using UnityEditor;
 using UnityEngine;
 
 using Jairoandrety.ColorApp;
-using System.IO;
 
 namespace Jairoandrety.ColorAppEditor
 {
@@ -17,10 +16,13 @@ namespace Jairoandrety.ColorAppEditor
         private static string titleWindow = "Color App Editor";
         private SerializedObject so;
 
+        private ColorPaletteSetup customSetup;
         private ColorPaletteSetup targetSetup;
 
-        public List<string> colorLabels = new List<string>() { "PrimaryColor", "SecondColor", "ThirdColor", "PrimaryFontColor", "SecondFontColor" };
-
+        private ColorAppData colorAppData;
+        //public List<string> colorLabels = new List<string>() { "PrimaryColor", "SecondColor", "ThirdColor", "PrimaryFontColor", "SecondFontColor" };
+        public List<string> colorLabels = new List<string>();
+            
         public List<PaletteEditor> colorPalettes = new List<PaletteEditor>();
         private Vector2 scrollPos = Vector2.zero;
         private GUISkin currentGUISkin;
@@ -37,20 +39,13 @@ namespace Jairoandrety.ColorAppEditor
         {
             ScriptableObject target = this;
             so = new SerializedObject(target);
-
-            if (ColorAppUtils.ValidatePaletteSetup())
-            {
-                LoadCurrentSetup();
-            }
-            else
-            {
-                CreatePaletteSetup();
-                LoadCurrentSetup();
-            }
+            
+            targetSetup = ColorAppUtils.GetColorPaletteSetup();
+            AssetDatabase.Refresh();
             
             if(targetSetup == null)
             {
-                LoadPalettesData();
+                LoadDefaultPalettesData();
             }
 
             currentGUISkin = GetUiStyle();
@@ -58,6 +53,13 @@ namespace Jairoandrety.ColorAppEditor
 
         private GUISkin GetUiStyle()
         {
+            //bool isInPackage = false;
+
+            //string packageName = "com.jairoandrety.colorapp";
+            //string packagePath = Path.Combine("Packages", packageName);
+
+            //isInPackage = Directory.Exists(packagePath);            
+
             //string GUIStylePath = "Packages/com.jairoandrety.colorapp/Editor/Resources/GuiSkin/ColorAppGUISkin.guiskin";
             string pathInAssetFolder = "Assets/ColorApp/";
             string pathInPackages = "Packages/com.jairoandrety.colorapp/";
@@ -88,40 +90,77 @@ namespace Jairoandrety.ColorAppEditor
             return null;
         }
 
+        bool showHelp = false;
+
         void OnGUI()
         {
             EditorGUILayout.Space(2);
             var imageStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
-            Texture2D miImagen = currentGUISkin.GetStyle("Logo").normal.background;
+            Texture2D logo = currentGUISkin.GetStyle("Logo").normal.background;
 
-            if (miImagen != null)
+            if (logo != null)
             {
-                GUILayout.Label(miImagen, imageStyle, GUILayout.Height(40));
+                GUILayout.Label(logo, imageStyle, GUILayout.Height(40));
             }           
 
             EditorGUILayout.Space(2);
             var targetSetupStyle = new GUIStyle(GUI.skin.box) { alignment = TextAnchor.MiddleCenter };
 
+#region Palette Setup
             EditorGUILayout.BeginVertical(targetSetupStyle);
             EditorGUILayout.Space(2);
-            EditorGUILayout.LabelField("Palette Target Setup", EditorStyles.boldLabel);
-            string targetSetupInfo = "In this section you can load or save data and assign it to a data container of your choice.";
-            EditorGUILayout.LabelField(targetSetupInfo, EditorStyles.wordWrappedLabel);
-
-            //lastValue = useCustomSetup;           
-
-            //if(!useCustomSetup)
-            //{
-            //    LoadCurrentSetup();               
-            //}
-
             EditorGUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
+            EditorGUILayout.LabelField("Palette Target Setup", EditorStyles.boldLabel);
+            if (GUILayout.Button("?", EditorStyles.miniButton, GUILayout.Width(20)))
+            {
+                showHelp = !showHelp;
+                
+                // show help dialog
+                //EditorUtility.DisplayDialog("Help", "This is the target setup for your color palettes. You can load or save data here.", "OK");
+                // Show help box
+                //EditorUtility.DisplayDialog("Help", "This is the target setup for your color palettes. You can load or save data here.", "OK");
+            }
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.Space(2);
+            string targetSetupInfo = "In this section, you can load or save color palettes.\nBy default, all data will be saved in the 'Target Setup' palette.";
+            EditorGUILayout.LabelField(targetSetupInfo, EditorStyles.helpBox);
+
+            if (showHelp)
+            {
+                EditorGUILayout.HelpBox("How does it work?\n" +
+                                        "All changes made in this panel are temporary until you press the save button.\n" +
+                                        "All changes will be saved in the 'Target Setup' palette, located in the Resources folder, and will be used for the tool's operation.\n" +
+                                        "If you load a custom palette, you can use it to load a custom color palette.\n" +
+                                        "If you press the save button, the changes will be applied to both the custom palette and the default palette.", MessageType.None);
+            }
+            
+            EditorGUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
+            customSetup = (ColorPaletteSetup)EditorGUILayout.ObjectField("Custom Setup", customSetup, typeof(ColorPaletteSetup), false);
+            if (customSetup)
+            {
+                if (GUILayout.Button("Load Custom Palette", GUILayout.Width(position.width * 0.25f)))
+                {
+                    LoadCustomPalettesData();
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+            
+            EditorGUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
+            GUI.enabled = false; // Deshabilitar interacción
             targetSetup = (ColorPaletteSetup)EditorGUILayout.ObjectField("Target Setup", targetSetup, typeof(ColorPaletteSetup), false);
+            GUI.enabled = true; // Restaurar interacción
+            
+            if (targetSetup == null)
+            {
+                targetSetup = ColorAppUtils.GetColorPaletteSetup();
+                AssetDatabase.Refresh();
+            }
+            
             if (targetSetup != null)
             {
                 if (GUILayout.Button("Load", GUILayout.Width(position.width * 0.15f)))
                 {
-                    LoadPalettesData();
+                    LoadDefaultPalettesData();
                 }
 
                 if (GUILayout.Button("Save", GUILayout.Width(position.width * 0.15f)))
@@ -129,19 +168,22 @@ namespace Jairoandrety.ColorAppEditor
                     SavePalettesData();
                 }
             }
-            else
-            {
-                if (GUILayout.Button("Create Setup", GUILayout.Width(position.width * 0.20f)))
-                {
-                    CreatePaletteSetup();
-                    LoadCurrentSetup();
-                }
-            }
+           // else
+            //{
+            //    if (GUILayout.Button("Create Setup", GUILayout.Width(position.width * 0.20f)))
+            //    {
+            //        CreatePaletteSetup();
+            //        targetSetup = ColorAppUtils.GetColorPaletteSetup();
+            //        AssetDatabase.Refresh();
+            //    }
+            //}
 
             EditorGUILayout.EndHorizontal();
             EditorGUILayout.Space(2);
             EditorGUILayout.EndVertical();
-
+#endregion
+            
+            EditorGUILayout.BeginVertical(targetSetupStyle);
             if (targetSetup == null)
             {
                 EditorGUILayout.Space(5);
@@ -152,9 +194,17 @@ namespace Jairoandrety.ColorAppEditor
             else
             {
                 EditorGUILayout.BeginVertical();
-
                 EditorGUILayout.LabelField("Palletes", EditorStyles.boldLabel);
-
+                
+                GUI.enabled = false; // Deshabilitar interacción
+                colorAppData = (ColorAppData)EditorGUILayout.ObjectField("ColorAppData", colorAppData, typeof(ColorAppData), false);
+                GUI.enabled = true; // Restaurar interacción
+                if (colorAppData == null)
+                {
+                    colorAppData = ColorAppUtils.GetColorAppData();
+                    AssetDatabase.Refresh();
+                }
+                
                 SerializedProperty listStringProperty = so.FindProperty(nameof(colorLabels));
                 EditorGUILayout.PropertyField(listStringProperty, true);
 
@@ -179,6 +229,7 @@ namespace Jairoandrety.ColorAppEditor
 
                 GUILayout.EndScrollView();
             }
+            EditorGUILayout.EndVertical();
 
             GUILayout.FlexibleSpace();
 
@@ -310,69 +361,65 @@ namespace Jairoandrety.ColorAppEditor
 
             so.Update();
         }
-
-        #region Load and Save Setup Asset
-        private void ValidateAndCreateResoucesFolder()
-        {
-            string resourcesPath = "Assets/Resources";
-
-            if (!AssetDatabase.IsValidFolder(resourcesPath))
-            {
-                AssetDatabase.CreateFolder("Assets", "Resources");
-                AssetDatabase.SaveAssets();
-                AssetDatabase.Refresh();
-            }
-        }
-
-        private void CreatePaletteSetup()
-        {
-            ValidateAndCreateResoucesFolder();
-            ColorAppUtils.CreatePaletteSetup();
-            AssetDatabase.Refresh();
-        }
-
-        private void LoadCurrentSetup()
-        {
-            targetSetup = ColorAppUtils.GetColorPaletteSetup();
-            AssetDatabase.Refresh();
-        }
-        #endregion
               
-        public void LoadPalettesData()
+        public void LoadCustomPalettesData()
+        {
+            if (customSetup == null)
+                return;
+
+            colorLabels.Clear();
+
+            if (customSetup.palettes.Count == 0) 
+                return;
+            
+            if (customSetup.palettes[0].colors.Count > 0)
+            {
+                for (int i = 0; i < customSetup.palettes[0].colors.Count; i++)
+                {
+                    colorLabels.Add(customSetup.palettes[0].colors[i].label);
+                }
+            }
+            
+            AssignPalettesData(customSetup);
+        }
+        
+        public void LoadDefaultPalettesData()
         {
             if (targetSetup == null)
                 return;
 
-            colorPalettes.Clear();
             colorLabels.Clear();
+            colorAppData = ColorAppUtils.GetColorAppData();
 
-            for (int i = 0; i < ColorAppUtils.GetColorAppData().ColorLabels.Count; i++)
+            if (colorAppData.ColorLabels.Count > 0)
             {
-                colorLabels.Add(ColorAppUtils.GetColorAppData().ColorLabels[i]);
+                for (int i = 0; i < colorAppData.ColorLabels.Count; i++)
+                {
+                    colorLabels.Add(colorAppData.ColorLabels[i]);
+                }
             }
+            
+            AssignPalettesData(targetSetup);
+        }
+        
+        public void AssignPalettesData(ColorPaletteSetup setup)
+        {
+            if (setup == null)
+                return;
 
-            for (int i = 0; i < targetSetup.palettes.Count; i++)
+            colorPalettes.Clear();
+
+            for (int i = 0; i < setup.palettes.Count; i++)
             {
                 PaletteEditor paletteEditor = new PaletteEditor();
+                paletteEditor.paletteName = setup.palettes[i].paletteName;
 
-                paletteEditor.paletteName = targetSetup.palettes[i].paletteName;
-
-                //for (int j = 0; j < targetSetup.palettes[i].labels.Count; j++)
-                //{
-                //    paletteEditor.labels.Add(targetSetup.palettes[i].labels[j]);
-                //}
-
-                //for (int k = 0; k < targetSetup.palettes[i].colors.Count; k++)
-                //{
-                //    paletteEditor.colors.Add(targetSetup.palettes[i].colors[k]);
-                //}
-
-                for (int j = 0; j < targetSetup.palettes[i].colors.Count; j++)
+                for (int j = 0; j < setup.palettes[i].colors.Count; j++)
                 {
                     ColorPallete NewColorPalette = new ColorPallete()
                     {
-                        label = targetSetup.palettes[i].colors[j].label,
-                        color = targetSetup.palettes[i].colors[j].color
+                        label = setup.palettes[i].colors[j].label,
+                        color = setup.palettes[i].colors[j].color
                     };
                     paletteEditor.colors.Add(NewColorPalette);
                 }
@@ -385,7 +432,8 @@ namespace Jairoandrety.ColorAppEditor
 
         public void SavePalettesData()
         {
-            if (targetSetup == null) return;
+            if (targetSetup == null)
+                return;
 
             if(ColorAppUtils.GetColorAppData().ColorLabels == null)
             {
@@ -400,6 +448,10 @@ namespace Jairoandrety.ColorAppEditor
             }
 
             targetSetup.palettes.Clear();
+            if(customSetup != null && customSetup != targetSetup)
+            {
+                customSetup.palettes.Clear();
+            }
 
             for (int i = 0; i < colorPalettes.Count; i++)
             {
@@ -429,6 +481,10 @@ namespace Jairoandrety.ColorAppEditor
                 }
 
                 targetSetup.palettes.Add(palette);
+                if(customSetup != null && customSetup != targetSetup)
+                {
+                    customSetup.palettes.Add(palette);
+                }
             }
 
             //ColorAppUtils.GetColorAppData().SetUseCustomPalette(useCustomSetup);
@@ -436,6 +492,10 @@ namespace Jairoandrety.ColorAppEditor
             so.Update();
             EditorUtility.SetDirty(this);
             EditorUtility.SetDirty(targetSetup);
+            if(customSetup != null)
+            {
+                EditorUtility.SetDirty(customSetup);
+            }
             AssetDatabase.SaveAssets();
         }
     }

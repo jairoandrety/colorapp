@@ -32,6 +32,7 @@ namespace Jairoandrety.ColorApp
 
             EditorGUI.EndProperty();
         }
+
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             float height = EditorGUI.GetPropertyHeight(property, label);

@@ -4,12 +4,12 @@ namespace Jairoandrety.ColorApp
 {
     public class ColorizerSpriteRenderer : Colorizer
     {
-        public override void SetColor(Color color)
+        public override void SetColor()
         {
-            base.SetColor(color);
+            base.SetColor();
 
             SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-            spriteRenderer.color = color;
+            spriteRenderer.color = GetColor();
         }
     }
 }

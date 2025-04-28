@@ -9,43 +9,44 @@ namespace Jairoandrety.ColorApp
 {
     public static class ColorAppUtils
     {
-        private static string _palettePath = "PaletteTargetSetup";
-        public static string PalettePath => _palettePath;
-
-        public static bool ValidatePaletteSetup()
-        {
-            return Resources.Load<ColorPaletteSetup>(PalettePath) != null;
-        }
+        private static string _resourcePath = "Assets/Resources";
+        private static string _colorAppDataPath = "ColorAppData";
+        private static string _defaultPalettePath = "PaletteTargetSetup";
+        
+        //public static bool ValidatePaletteSetup()
+        //{
+        //    return Resources.Load<ColorPaletteSetup>(_defaultPalettePath) != null;
+        //}
 
         public static ColorPaletteSetup GetColorPaletteSetup()
         {
-            ColorPaletteSetup paleteLoaded = Resources.Load<ColorPaletteSetup>(PalettePath);
+            VerifyResourcesFolder();
+            ColorPaletteSetup paletteLoaded = Resources.Load<ColorPaletteSetup>(_defaultPalettePath);
 #if UNITY_EDITOR
-            if (paleteLoaded == null)
+            if (paletteLoaded == null)
             {
-                CreatePaletteSetup();
+                paletteLoaded = CreatePaletteSetup();
             }
 #endif
-            return paleteLoaded;
+            return paletteLoaded;
         }
-
-#if UNITY_EDITOR
-        public static void CreatePaletteSetup()
+        
+        public static ColorPaletteSetup CreatePaletteSetup()
         {
             VerifyResourcesFolder();
             ColorPaletteSetup newPalette = ScriptableObject.CreateInstance<ColorPaletteSetup>();
-            AssetDatabase.CreateAsset(newPalette, string.Format("Assets/Resources/{0}.asset", PalettePath));
+            AssetDatabase.CreateAsset(newPalette, string.Format("{0}/{1}.asset", _resourcePath, _defaultPalettePath));
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
+            return newPalette; 
         }
 
-
-        private static void VerifyResourcesFolder()
+        public static void VerifyResourcesFolder()
         {
-            bool folderExist = Directory.Exists("Assets/Resources");
-            if (!folderExist)
+            bool folderResourcesExist = Directory.Exists(_resourcePath);
+            if (!folderResourcesExist)
             {
-                Directory.CreateDirectory("Assets/Resources");
+                Directory.CreateDirectory(_resourcePath);
             }
         }
 
@@ -74,28 +75,51 @@ namespace Jairoandrety.ColorApp
 
         public static ColorAppData GetColorAppData()
         {
-            string path = "Runtime/Data/ColorAppData.asset";
-            ColorAppData ColorAppDataLoaded = GetColorAppDataFromPath(path);            
-
-            if (ColorAppDataLoaded != null)
+            VerifyResourcesFolder();
+            ColorAppData colorAppDataLoaded = Resources.Load<ColorAppData>(_colorAppDataPath);
+#if UNITY_EDITOR
+            if (colorAppDataLoaded == null)
             {
-                return ColorAppDataLoaded;
+                colorAppDataLoaded = CreateColorAppData();
             }
-
-            return null;
+#endif
+            return colorAppDataLoaded;
         }
+        
+#if UNITY_EDITOR
+        public static ColorAppData CreateColorAppData()
+        {
+            VerifyResourcesFolder();
+            ColorAppData newColorAppData = ScriptableObject.CreateInstance<ColorAppData>();
+            AssetDatabase.CreateAsset(newColorAppData, string.Format("{0}/{1}.asset", _resourcePath, _colorAppDataPath));
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            return newColorAppData;
+        }
+#endif
+        
+        //public static ColorAppData GetColorAppDataFromPath(string path)
+        //{
+            //string pathInAssetFolder = "Assets/ColorApp/";
+            //string pathInPackages = "Packages/com.jairoandrety.colorapp/";
+            //ColorAppData objInPackeages = AssetDatabase.LoadAssetAtPath<ColorAppData>(pathInPackages + path);
+            //ColorAppData objInAssetFolder = AssetDatabase.LoadAssetAtPath<ColorAppData>(pathInAssetFolder + path);
+            //return objInPackeages != null ? objInPackeages : objInAssetFolder;
+        //}
 
-        public static ColorAppData GetColorAppDataFromPath(string path)
+        public static string GetPackagePath()
         {
             string pathInAssetFolder = "Assets/ColorApp/";
             string pathInPackages = "Packages/com.jairoandrety.colorapp/";
-
-            ColorAppData objInPackeages = AssetDatabase.LoadAssetAtPath<ColorAppData>(pathInPackages + path);
-            ColorAppData objInAssetFolder = AssetDatabase.LoadAssetAtPath<ColorAppData>(pathInAssetFolder + path);
-
-            return objInPackeages != null ? objInPackeages : objInAssetFolder;
+            
+            if(Directory.Exists(pathInAssetFolder))
+                return pathInAssetFolder;
+            else if (Directory.Exists(pathInPackages))
+                return pathInPackages;
+            else
+                return null;
         }
-
+        
         public static List<string> ColorLabels()
         {
             List<string> labels = new List<string>();
@@ -126,6 +150,5 @@ namespace Jairoandrety.ColorApp
             }
             return names;
         }
-#endif
     }
 }

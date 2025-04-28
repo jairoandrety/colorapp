@@ -5,12 +5,11 @@ namespace Jairoandrety.ColorApp
 {
     public class ColorizerRenderer : Colorizer
     {
-        // Start is called before the first frame update
-        public override void SetColor(Color color)
+        public override void SetColor()
         {
-            base.SetColor(color);
+            base.SetColor();
             Renderer renderer = GetComponent<Renderer>();
-            renderer.material.color = color;
+            renderer.material.color = GetColor();
         }
     }
 }
