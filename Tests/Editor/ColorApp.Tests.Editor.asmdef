@@ -1,0 +1,28 @@
+﻿{
+    "name": "ColorApp.Tests.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:571b348fd62363e4cad48d7720969fc4",
+        "GUID:6869d0834570b8c4bbbcb50d9d2d7bea",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "resourcesFolders": [
+        "Resources"
+    ],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

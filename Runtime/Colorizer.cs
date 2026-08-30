@@ -1,127 +1,51 @@
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-using UnityEngine;
+ï»¿using UnityEngine;
 
 namespace Jairoandrety.ColorApp
 {
     [ExecuteAlways]
     public class Colorizer : MonoBehaviour
     {
-        public ColorizerData colorizerData;
-
-        protected ColorizerHandler colorizerHandler;
+        public ColorizerData colorizerData = new ColorizerData();
 
         protected Color GetColor()
         {
-            if (colorizerData.overrideColor)
-                return colorizerData.customColor;
+            ColorizerHandler active = ColorizerHandler.Active;
+            ColorPaletteLibrary library = ColorAppUtils.GetLibrary();
 
-            return ColorAppUtils.GetColorPaletteSetup().palettes[colorizerHandler.colorizerHandlerData.colorPaletteSelected].colors[colorizerData.selectedIndex].color;
+            ColorVariant variant = active != null
+                ? active.ActiveVariant
+                : (library != null ? library.DefaultVariant : ColorVariant.Primary);
+
+            if (colorizerData.overrideColor)
+                return colorizerData.GetOverride(variant);
+
+            if (library == null || !library.HasPalettes)
+                return colorizerData.GetOverride(variant);
+
+            // El binding sigue siendo por indice. Si el indice guardado se sale
+            // de rango (p. ej. al cambiar a una paleta con menos entradas), la
+            // libreria recorta al ultimo valor disponible en vez de lanzar.
+            int paletteIndex = active != null
+                ? active.colorizerHandlerData.colorPaletteSelected
+                : library.DefaultPaletteIndex;
+
+            return library.Resolve(paletteIndex, colorizerData.selectedIndex, variant, colorizerData.GetOverride(variant));
         }
 
         private void OnEnable()
         {
-#if UNITY_6000_0_OR_NEWER
-            colorizerHandler = FindAnyObjectByType<ColorizerHandler>();
-#else
-            colorizerHandler = FindObjectOfType<ColorizerHandler>();
-#endif
-            if (colorizerHandler != null)
-            {
-                colorizerHandler.OnPalleteColorChange += SetColor;
-                SetColor();
-            }
+            // Suscripcion al evento estatico del Handler: no hace falta
+            // encontrar ni cachear ninguna instancia. Si el Handler todavia no
+            // existe (o se crea despues), el aviso llega igual cuando aparezca.
+            ColorizerHandler.PaletteChanged += SetColor;
+            SetColor();
         }
 
         private void OnDisable()
         {
-            if(colorizerHandler != null)
-            {
-                colorizerHandler.OnPalleteColorChange -= SetColor;
-            }
+            ColorizerHandler.PaletteChanged -= SetColor;
         }
 
         public virtual void SetColor() { }
     }
-
-#if UNITY_EDITOR
-    [ExecuteAlways]
-    [CustomEditor(typeof(Colorizer), true)]
-    public class ColorizerEditor : Editor
-    {
-        private int previousIndex = -1;
-        bool previousOverride = false;
-        Color previousColor = Color.white;
-
-        public override void OnInspectorGUI()
-        {
-            serializedObject.Update();
-            DrawDefaultInspector();
-
-            var colorizer = (Colorizer)target;
-            // Detectar cambio manualmente
-            SerializedProperty dataProp = serializedObject.FindProperty("colorizerData");
-
-            if(dataProp != null)
-            {
-                //SerializedProperty indexProp = dataProp.FindPropertyRelative("selectedIndex");
-                var indexProp = dataProp.FindPropertyRelative("selectedIndex");
-                var overrideProp = dataProp.FindPropertyRelative("overrideColor");
-                var colorProp = dataProp.FindPropertyRelative("customColor");
-
-                //int currentIndex = indexProp.intValue;
-
-                //if (currentIndex != previousIndex)
-                //{
-                //    previousIndex = currentIndex;
-
-                //    // Ejecutar tu lógica cuando cambie el índice
-                //    colorizer.SetColor();
-
-                //    // Marcar objeto sucio para que se actualice en editor
-                //    EditorUtility.SetDirty(colorizer);
-                //}
-
-                bool changed = false;
-
-                if (indexProp != null && indexProp.intValue != previousIndex)
-                {
-                    previousIndex = indexProp.intValue;
-                    changed = true;
-                }
-
-                if (overrideProp != null && overrideProp.boolValue != previousOverride)
-                {
-                    previousOverride = overrideProp.boolValue;
-                    changed = true;
-                }
-
-                if (colorProp != null && colorProp.colorValue != previousColor)
-                {
-                    previousColor = colorProp.colorValue;
-                    changed = true;
-                }
-
-                if (changed)
-                {
-                    colorizer.SetColor();
-                    EditorUtility.SetDirty(colorizer);
-                }
-            }
-
-            EditorGUILayout.Space();
-            if (ColorAppUtils.ColorLabels().Count > 0)
-            {
-               
-            }
-            else
-            {
-                EditorGUILayout.HelpBox("No color palettes found, please set one in the palette editor: Window/ColorApp/ColorAppEditor.", MessageType.Info);
-            }
-
-            serializedObject.ApplyModifiedProperties();
-        }
-    }
-#endif
 }

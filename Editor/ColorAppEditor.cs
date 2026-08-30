@@ -1,503 +1,525 @@
-using System;
 using System.Collections.Generic;
-
-# if UNITY_EDITOR
 using UnityEditor;
-#endif
 using UnityEngine;
-
 using Jairoandrety.ColorApp;
 
 namespace Jairoandrety.ColorAppEditor
 {
-#if UNITY_EDITOR
+    /// <summary>
+    /// Ventana principal de ColorApp. Edita el ColorPaletteLibrary directamente
+    /// a traves de SerializedObject: no hay copias temporales ni boton de Save,
+    /// y Undo funciona como en cualquier inspector.
+    /// </summary>
     public class ColorAppEditor : EditorWindow
     {
-        private static string titleWindow = "Color App Editor";
-        private SerializedObject so;
+        private const string TitleWindow = "Color App Editor";
+        private const float PaletteListWidth = 150f;
+        private const float ColorColumnWidth = 70f;
+        private const float RowGap = 4f;
 
-        private ColorPaletteSetup customSetup;
-        private ColorPaletteSetup targetSetup;
-
-        private ColorAppData colorAppData;
-        //public List<string> colorLabels = new List<string>() { "PrimaryColor", "SecondColor", "ThirdColor", "PrimaryFontColor", "SecondFontColor" };
-        public List<string> colorLabels = new List<string>();
-            
-        public List<PaletteEditor> colorPalettes = new List<PaletteEditor>();
-        private Vector2 scrollPos = Vector2.zero;
+        private ColorPaletteLibrary library;
+        private SerializedObject librarySO;
+        private int selectedPalette;
+        private Vector2 listScroll;
+        private Vector2 slotScroll;
         private GUISkin currentGUISkin;
 
         [MenuItem("Window/ColorApp/ColorAppEditor")]
         public static void ShowWindow()
         {
             var window = GetWindow<ColorAppEditor>();
-            window.titleContent = new GUIContent(titleWindow);
+            window.titleContent = new GUIContent(TitleWindow);
+            window.minSize = new Vector2(520f, 320f);
             window.Focus();
         }
 
         private void OnEnable()
         {
-            ScriptableObject target = this;
-            so = new SerializedObject(target);
-            
-            targetSetup = ColorAppUtils.GetColorPaletteSetup();
-            AssetDatabase.Refresh();
-            
-            if(targetSetup == null)
-            {
-                LoadDefaultPalettesData();
-            }
-
             currentGUISkin = GetUiStyle();
+            BindLibrary(ColorAppUtils.GetLibrary());
+        }
+
+        private void BindLibrary(ColorPaletteLibrary target)
+        {
+            library = target;
+            librarySO = library != null ? new SerializedObject(library) : null;
+            selectedPalette = 0;
         }
 
         private GUISkin GetUiStyle()
         {
-            //bool isInPackage = false;
+            const string skinRelativePath = "Editor/Resources/GuiSkin/ColorAppGUISkin.guiskin";
+            string[] roots = { "Packages/com.jairoandrety.colorapp/", "Assets/ColorApp/" };
 
-            //string packageName = "com.jairoandrety.colorapp";
-            //string packagePath = Path.Combine("Packages", packageName);
-
-            //isInPackage = Directory.Exists(packagePath);            
-
-            //string GUIStylePath = "Packages/com.jairoandrety.colorapp/Editor/Resources/GuiSkin/ColorAppGUISkin.guiskin";
-            string pathInAssetFolder = "Assets/ColorApp/";
-            string pathInPackages = "Packages/com.jairoandrety.colorapp/";
-            string GUIStylePath = "Editor/Resources/GuiSkin/ColorAppGUISkin.guiskin";
-
-            try
+            foreach (string root in roots)
             {
-                GUISkin guiSkinPackages = (GUISkin)AssetDatabase.LoadAssetAtPath(pathInPackages + GUIStylePath, typeof(GUISkin));
-                GUISkin guiSkinAsset = (GUISkin)AssetDatabase.LoadAssetAtPath(pathInAssetFolder + GUIStylePath, typeof(GUISkin));
+                var skin = AssetDatabase.LoadAssetAtPath<GUISkin>(root + skinRelativePath);
+                if (skin != null)
+                    return skin;
+            }
 
-                if(guiSkinPackages != null)
-                {
-                    return guiSkinPackages;
-                }
-                else if(guiSkinAsset != null)
-                {
-                    return guiSkinAsset;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e.Message);
-            }
             return null;
         }
 
-        bool showHelp = false;
+        private void OnGUI()
+        {
+            DrawLogo();
+            DrawLibraryField();
 
-        void OnGUI()
+            if (library == null)
+            {
+                DrawNoLibraryState();
+                GUILayout.FlexibleSpace();
+                DrawFooter();
+                return;
+            }
+
+            if (librarySO == null)
+                BindLibrary(library);
+
+            librarySO.Update();
+
+            DrawActiveSelection();
+
+            EditorGUILayout.Space(4);
+            EditorGUILayout.BeginHorizontal();
+            DrawPaletteList();
+            DrawSelectedPalette();
+            EditorGUILayout.EndHorizontal();
+
+            librarySO.ApplyModifiedProperties();
+
+            DrawDiagnostics();
+            DrawFooter();
+        }
+
+        private void DrawLogo()
         {
             EditorGUILayout.Space(2);
-            var imageStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
-            Texture2D logo = currentGUISkin.GetStyle("Logo").normal.background;
+
+            Texture2D logo = null;
+            if (currentGUISkin != null)
+            {
+                GUIStyle logoStyle = currentGUISkin.FindStyle("Logo");
+                if (logoStyle != null)
+                    logo = logoStyle.normal.background;
+            }
 
             if (logo != null)
             {
+                var imageStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
                 GUILayout.Label(logo, imageStyle, GUILayout.Height(40));
-            }           
-
-            EditorGUILayout.Space(2);
-            var targetSetupStyle = new GUIStyle(GUI.skin.box) { alignment = TextAnchor.MiddleCenter };
-
-#region Palette Setup
-            EditorGUILayout.BeginVertical(targetSetupStyle);
-            EditorGUILayout.Space(2);
-            EditorGUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
-            EditorGUILayout.LabelField("Palette Target Setup", EditorStyles.boldLabel);
-            if (GUILayout.Button("?", EditorStyles.miniButton, GUILayout.Width(20)))
-            {
-                showHelp = !showHelp;
-                
-                // show help dialog
-                //EditorUtility.DisplayDialog("Help", "This is the target setup for your color palettes. You can load or save data here.", "OK");
-                // Show help box
-                //EditorUtility.DisplayDialog("Help", "This is the target setup for your color palettes. You can load or save data here.", "OK");
             }
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space(2);
-            string targetSetupInfo = "In this section, you can load or save color palettes.\nBy default, all data will be saved in the 'Target Setup' palette.";
-            EditorGUILayout.LabelField(targetSetupInfo, EditorStyles.helpBox);
+        }
 
-            if (showHelp)
-            {
-                EditorGUILayout.HelpBox("How does it work?\n" +
-                                        "All changes made in this panel are temporary until you press the save button.\n" +
-                                        "All changes will be saved in the 'Target Setup' palette, located in the Resources folder, and will be used for the tool's operation.\n" +
-                                        "If you load a custom palette, you can use it to load a custom color palette.\n" +
-                                        "If you press the save button, the changes will be applied to both the custom palette and the default palette.", MessageType.None);
-            }
-            
-            EditorGUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
-            customSetup = (ColorPaletteSetup)EditorGUILayout.ObjectField("Custom Setup", customSetup, typeof(ColorPaletteSetup), false);
-            if (customSetup)
-            {
-                if (GUILayout.Button("Load Custom Palette", GUILayout.Width(position.width * 0.25f)))
-                {
-                    LoadCustomPalettesData();
-                }
-            }
-            EditorGUILayout.EndHorizontal();
-            
-            EditorGUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
-            GUI.enabled = false; // Deshabilitar interacción
-            targetSetup = (ColorPaletteSetup)EditorGUILayout.ObjectField("Target Setup", targetSetup, typeof(ColorPaletteSetup), false);
-            GUI.enabled = true; // Restaurar interacción
-            
-            if (targetSetup == null)
-            {
-                targetSetup = ColorAppUtils.GetColorPaletteSetup();
-                AssetDatabase.Refresh();
-            }
-            
-            if (targetSetup != null)
-            {
-                if (GUILayout.Button("Load", GUILayout.Width(position.width * 0.15f)))
-                {
-                    LoadDefaultPalettesData();
-                }
+        private void DrawLibraryField()
+        {
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
-                if (GUILayout.Button("Save", GUILayout.Width(position.width * 0.15f)))
-                {
-                    SavePalettesData();
-                }
+            EditorGUI.BeginChangeCheck();
+            var picked = (ColorPaletteLibrary)EditorGUILayout.ObjectField(
+                "Palette Library", library, typeof(ColorPaletteLibrary), false);
+            if (EditorGUI.EndChangeCheck())
+            {
+                ColorAppUtils.SetLibrary(picked);
+                BindLibrary(picked);
             }
-           // else
-            //{
-            //    if (GUILayout.Button("Create Setup", GUILayout.Width(position.width * 0.20f)))
-            //    {
-            //        CreatePaletteSetup();
-            //        targetSetup = ColorAppUtils.GetColorPaletteSetup();
-            //        AssetDatabase.Refresh();
-            //    }
-            //}
 
-            EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space(2);
             EditorGUILayout.EndVertical();
-#endregion
-            
-            EditorGUILayout.BeginVertical(targetSetupStyle);
-            if (targetSetup == null)
+        }
+
+        private void DrawNoLibraryState()
+        {
+            EditorGUILayout.Space(6);
+            EditorGUILayout.HelpBox(
+                "Todavia no hay ninguna libreria de paletas en el proyecto. " +
+                "Empieza con la paleta de ejemplo, o migra tus assets del formato anterior si ya usabas ColorApp.",
+                MessageType.Info);
+
+            EditorGUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("Crear con paleta de ejemplo", GUILayout.Height(24)))
+                CreateLibrary(withSample: true);
+
+            if (GUILayout.Button("Crear vacia", GUILayout.Height(24)))
+                CreateLibrary(withSample: false);
+
+            if (GUILayout.Button("Migrar assets antiguos", GUILayout.Height(24)))
             {
-                EditorGUILayout.Space(5);
-                var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
-                EditorGUILayout.LabelField("No tienes un archivo de configuración", style, GUILayout.ExpandWidth(true));
-                EditorGUILayout.Space(5);
+                ColorAppMigration.MigrateWithDialog();
+                ColorAppUtils.InvalidateLibraryCache();
+                BindLibrary(ColorAppUtils.GetLibrary());
+            }
+
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.Space(6);
+        }
+
+        private void CreateLibrary(bool withSample)
+        {
+            string path = EditorUtility.SaveFilePanelInProject(
+                "Crear libreria de paletas", "ColorPaletteLibrary", "asset",
+                "Elige donde guardar la libreria de paletas.");
+
+            if (string.IsNullOrEmpty(path))
+                return;
+
+            var created = CreateInstance<ColorPaletteLibrary>();
+            if (withSample)
+                created.Palettes.Add(ColorAppSamplePalette.Create());
+
+            AssetDatabase.CreateAsset(created, path);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            ColorAppUtils.InvalidateLibraryCache();
+            ColorAppUtils.SetLibrary(created);
+            BindLibrary(created);
+        }
+
+        /// <summary>
+        /// Paleta y variante activas, en dos niveles: el valor por defecto del
+        /// proyecto (guardado en la libreria) y, si hay un ColorizerHandler en
+        /// la escena abierta, el suyo, que es el que manda en esa escena.
+        /// </summary>
+        private void DrawActiveSelection()
+        {
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.LabelField("Paleta activa", EditorStyles.boldLabel);
+
+            string[] paletteNames = library.PaletteNames().ToArray();
+            if (paletteNames.Length == 0)
+            {
+                EditorGUILayout.LabelField("Anade una paleta para empezar.", EditorStyles.miniLabel);
+                EditorGUILayout.EndVertical();
+                return;
+            }
+
+            SerializedProperty indexProp = librarySO.FindProperty("_defaultPaletteIndex");
+            SerializedProperty variantProp = librarySO.FindProperty("_defaultVariant");
+
+            int projectIndex = Mathf.Clamp(indexProp.intValue, 0, paletteNames.Length - 1);
+            ColorPalette projectPalette = library.GetPalette(projectIndex);
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Proyecto", GUILayout.Width(70f));
+            indexProp.intValue = EditorGUILayout.Popup(projectIndex, paletteNames);
+            variantProp.enumValueIndex = EditorGUILayout.Popup(
+                Mathf.Clamp(variantProp.enumValueIndex, 0, 1), VariantNames(projectPalette));
+            EditorGUILayout.EndHorizontal();
+
+            ColorizerHandler handler = ColorizerHandler.Active;
+            if (handler != null)
+            {
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField(new GUIContent("Escena", $"ColorizerHandler en '{handler.name}'"), GUILayout.Width(70f));
+
+                int handlerIndex = Mathf.Clamp(handler.colorizerHandlerData.colorPaletteSelected, 0, paletteNames.Length - 1);
+                ColorPalette handlerPalette = library.GetPalette(handlerIndex);
+
+                EditorGUI.BeginChangeCheck();
+                int newHandlerIndex = EditorGUILayout.Popup(handlerIndex, paletteNames);
+                int newVariant = EditorGUILayout.Popup((int)handler.ActiveVariant, VariantNames(handlerPalette));
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    // Preview en vivo: escribir en el Handler y recolorear.
+                    Undo.RecordObject(handler, "Cambiar paleta activa");
+                    handler.colorizerHandlerData.colorPaletteSelected = newHandlerIndex;
+                    handler.ActiveVariant = (ColorVariant)newVariant;
+                    handler.ColorizerAll();
+                    EditorUtility.SetDirty(handler);
+                }
+
+                EditorGUILayout.EndHorizontal();
             }
             else
             {
-                EditorGUILayout.BeginVertical();
-                EditorGUILayout.LabelField("Palletes", EditorStyles.boldLabel);
-                
-                GUI.enabled = false; // Deshabilitar interacción
-                colorAppData = (ColorAppData)EditorGUILayout.ObjectField("ColorAppData", colorAppData, typeof(ColorAppData), false);
-                GUI.enabled = true; // Restaurar interacción
-                if (colorAppData == null)
-                {
-                    colorAppData = ColorAppUtils.GetColorAppData();
-                    AssetDatabase.Refresh();
-                }
-                
-                SerializedProperty listStringProperty = so.FindProperty(nameof(colorLabels));
-                EditorGUILayout.PropertyField(listStringProperty, true);
+                EditorGUILayout.LabelField(
+                    "Sin ColorizerHandler en la escena: manda el valor de proyecto.",
+                    EditorStyles.miniLabel);
+            }
 
-                ShowPalleteButtons();
-                scrollPos = GUILayout.BeginScrollView(scrollPos, false, false, GUILayout.ExpandHeight(true));
-                if (colorPalettes.Count > 0)
+            EditorGUILayout.EndVertical();
+        }
+
+        private static string[] VariantNames(ColorPalette palette)
+        {
+            if (palette == null)
+                return new[] { "Primary", "Secondary" };
+
+            return new[]
+            {
+                palette.VariantName(ColorVariant.Primary),
+                palette.VariantName(ColorVariant.Secondary)
+            };
+        }
+
+        private void DrawPaletteList()
+        {
+            EditorGUILayout.BeginVertical(GUILayout.Width(PaletteListWidth));
+
+            EditorGUILayout.LabelField("Paletas", EditorStyles.boldLabel);
+
+            listScroll = EditorGUILayout.BeginScrollView(listScroll, EditorStyles.helpBox, GUILayout.ExpandHeight(true));
+
+            if (library.PaletteCount == 0)
+            {
+                EditorGUILayout.LabelField("Ninguna", EditorStyles.miniLabel);
+            }
+            else
+            {
+                for (int i = 0; i < library.PaletteCount; i++)
                 {
-                    SerializedProperty localPalettesProperty = so.FindProperty(nameof(colorPalettes));
-                    if (localPalettesProperty.arraySize > 0)
+                    ColorPalette palette = library.Palettes[i];
+                    string name = palette != null && !string.IsNullOrEmpty(palette.displayName)
+                        ? palette.displayName
+                        : $"Palette {i}";
+
+                    bool isSelected = i == selectedPalette;
+                    bool isActive = i == library.DefaultPaletteIndex;
+                    string entry = isActive ? name + "  *" : name;
+
+                    if (GUILayout.Toggle(isSelected, entry, EditorStyles.miniButton) && !isSelected)
+                        selectedPalette = i;
+                }
+            }
+
+            EditorGUILayout.EndScrollView();
+
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("+"))
+                AddPalette();
+
+            using (new EditorGUI.DisabledScope(library.PaletteCount == 0))
+            {
+                if (GUILayout.Button("-"))
+                    RemoveSelectedPalette();
+            }
+            EditorGUILayout.EndHorizontal();
+
+            if (library.PaletteCount > 0)
+            {
+                using (new EditorGUI.DisabledScope(selectedPalette == library.DefaultPaletteIndex))
+                {
+                    if (GUILayout.Button("Marcar activa"))
                     {
-                        EditorGUILayout.PropertyField(localPalettesProperty, true);
+                        librarySO.FindProperty("_defaultPaletteIndex").intValue = selectedPalette;
+                        librarySO.ApplyModifiedProperties();
+                        RefreshScene();
                     }
                 }
-                else
-                {
-                    GUILayout.Space(5);
-                    var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
-                    EditorGUILayout.LabelField("No tienes paletas creadas", style, GUILayout.ExpandWidth(true));
-                    EditorGUILayout.Space(5);
-                }
-                EditorGUILayout.EndHorizontal();
-
-                GUILayout.EndScrollView();
             }
+
             EditorGUILayout.EndVertical();
+        }
 
-            GUILayout.FlexibleSpace();
-
-            EditorGUILayout.BeginVertical(currentGUISkin.box);
-            EditorGUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
-
-            GUILayout.Label("Created By Jairoandrety", EditorStyles.boldLabel);
-            if(GUILayout.Button("Visit Website", EditorStyles.miniButton, GUILayout.Width(150)))
-            {
-                Application.OpenURL("https://jairoandrety.wordpress.com");
-            }
-            GUILayout.EndHorizontal();
-            EditorGUILayout.EndVertical();
-
-            so.ApplyModifiedProperties();
-        }      
-
-        #region Buttons Palette Buttons
-        private void ShowPalleteButtons()
+        private void DrawSelectedPalette()
         {
-            var style = new GUIStyle(GUI.skin.box) { alignment = TextAnchor.MiddleCenter };
+            EditorGUILayout.BeginVertical();
 
-            float buttonWidth = position.width * 0.32f;
-
-            EditorGUILayout.BeginHorizontal(style, GUILayout.ExpandWidth(true));
-
-            if (GUILayout.Button("Add New Palette"))
+            if (library.PaletteCount == 0)
             {
-                //List<string> Labels = new List<string>();
-                //List<Color> colors = new List<Color>();
-                List<ColorPallete> colors = new List<ColorPallete>();
-
-                for (int i = 0; i < colorLabels.Count; i++)
-                {
-                    ColorPallete colorPallete = new ColorPallete()
-                    {
-                        label = colorLabels[i],
-                        color = Color.white,
-                    };
-
-                    colors.Add(colorPallete);
-                }
-
-                PaletteEditor palette = new PaletteEditor()
-                {
-                    paletteName = "New Palette",
-                    colors = colors
-                    //labels = Labels,
-                    //colors = colors
-                };
-
-                colorPalettes.Add(palette);
-                so.Update();
+                EditorGUILayout.LabelField("Detalle", EditorStyles.boldLabel);
+                EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.ExpandHeight(true));
+                GUILayout.FlexibleSpace();
+                var centered = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, wordWrap = true };
+                EditorGUILayout.LabelField("No tienes paletas creadas.\nPulsa + para anadir una.", centered);
+                GUILayout.FlexibleSpace();
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.EndVertical();
+                return;
             }
 
-            if (GUILayout.Button("Remove Last Palette"))
-            {
-                if (colorPalettes.Count > 0)
-                {
-                    colorPalettes.RemoveAt(colorPalettes.Count - 1);
-                }
+            selectedPalette = Mathf.Clamp(selectedPalette, 0, library.PaletteCount - 1);
 
-                so.Update();
-            }
-            if (GUILayout.Button("Clear All Palettes"))
+            SerializedProperty palettesProp = librarySO.FindProperty("_palettes");
+            SerializedProperty paletteProp = palettesProp.GetArrayElementAtIndex(selectedPalette);
+            SerializedProperty nameProp = paletteProp.FindPropertyRelative("displayName");
+            SerializedProperty primaryNameProp = paletteProp.FindPropertyRelative("primaryVariantName");
+            SerializedProperty secondaryNameProp = paletteProp.FindPropertyRelative("secondaryVariantName");
+            SerializedProperty slotsProp = paletteProp.FindPropertyRelative("slots");
+
+            EditorGUILayout.LabelField("Detalle", EditorStyles.boldLabel);
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox, GUILayout.ExpandHeight(true));
+
+            EditorGUI.BeginChangeCheck();
+            EditorGUILayout.PropertyField(nameProp, new GUIContent("Nombre"));
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("Variantes", GUILayout.Width(EditorGUIUtility.labelWidth - 4f));
+            primaryNameProp.stringValue = EditorGUILayout.TextField(primaryNameProp.stringValue);
+            secondaryNameProp.stringValue = EditorGUILayout.TextField(secondaryNameProp.stringValue);
+            EditorGUILayout.EndHorizontal();
+
+            if (EditorGUI.EndChangeCheck())
+                RefreshScene();
+
+            EditorGUILayout.Space(6);
+
+            DrawSlotHeader(primaryNameProp.stringValue, secondaryNameProp.stringValue);
+
+            slotScroll = EditorGUILayout.BeginScrollView(slotScroll, GUILayout.ExpandHeight(true));
+
+            if (slotsProp.arraySize == 0)
             {
-                colorPalettes.Clear();
-                so.Update();
+                EditorGUILayout.LabelField("Sin colores. Pulsa 'Anadir color'.", EditorStyles.miniLabel);
+            }
+            else
+            {
+                EditorGUI.BeginChangeCheck();
+
+                for (int i = 0; i < slotsProp.arraySize; i++)
+                    DrawSlotRow(slotsProp, i);
+
+                if (EditorGUI.EndChangeCheck())
+                    RefreshScene();
+            }
+
+            EditorGUILayout.EndScrollView();
+
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Anadir color"))
+                AddSlot();
+
+            using (new EditorGUI.DisabledScope(slotsProp.arraySize == 0))
+            {
+                if (GUILayout.Button("Quitar ultimo"))
+                    RemoveLastSlot();
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndVertical();
+        }
+
+        private void DrawSlotHeader(string primaryName, string secondaryName)
+        {
+            var headerStyle = new GUIStyle(EditorStyles.miniLabel) { alignment = TextAnchor.MiddleLeft };
+
+            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.LabelField("key", headerStyle);
+            GUILayout.FlexibleSpace();
+            EditorGUILayout.LabelField(
+                string.IsNullOrEmpty(primaryName) ? "Primary" : primaryName,
+                headerStyle, GUILayout.Width(ColorColumnWidth));
+            EditorGUILayout.LabelField(
+                string.IsNullOrEmpty(secondaryName) ? "Secondary" : secondaryName,
+                headerStyle, GUILayout.Width(ColorColumnWidth));
+            GUILayout.Space(22f);
+            EditorGUILayout.EndHorizontal();
+        }
+
+        private void DrawSlotRow(SerializedProperty slotsProp, int index)
+        {
+            SerializedProperty slotProp = slotsProp.GetArrayElementAtIndex(index);
+            SerializedProperty keyProp = slotProp.FindPropertyRelative("key");
+            SerializedProperty primaryProp = slotProp.FindPropertyRelative("primary");
+            SerializedProperty secondaryProp = slotProp.FindPropertyRelative("secondary");
+
+            EditorGUILayout.BeginHorizontal();
+
+            keyProp.stringValue = EditorGUILayout.TextField(keyProp.stringValue);
+            primaryProp.colorValue = EditorGUILayout.ColorField(
+                GUIContent.none, primaryProp.colorValue, false, true, false, GUILayout.Width(ColorColumnWidth));
+            secondaryProp.colorValue = EditorGUILayout.ColorField(
+                GUIContent.none, secondaryProp.colorValue, false, true, false, GUILayout.Width(ColorColumnWidth));
+
+            if (GUILayout.Button("x", EditorStyles.miniButton, GUILayout.Width(20f)))
+            {
+                slotsProp.DeleteArrayElementAtIndex(index);
+                librarySO.ApplyModifiedProperties();
+                RefreshScene();
+                GUIUtility.ExitGUI();
             }
 
             EditorGUILayout.EndHorizontal();
-            EditorGUILayout.Space(10);
-        }
-        #endregion
-
-        private void OnInspectorUpdate()
-        {
-            if (colorPalettes.Count == 0)
-                return;
-
-            for (int i = 0; i < colorPalettes.Count; i++)
-            {
-                if (colorPalettes[i].colors.Count != colorLabels.Count)
-                {
-                    if (colorPalettes[i].colors.Count < colorLabels.Count)
-                    {
-                        //while (colorPalettes[i].labels.Count < colorLabels.Count)
-                        //{
-                        //    colorPalettes[i].labels.Add(colorLabels[i]);
-                        //}
-
-                        //while (colorPalettes[i].colors.Count < colorLabels.Count)
-                        //{
-                        //    colorPalettes[i].colors.Add(Color.white);
-                        //}                       
-
-                        while (colorPalettes[i].colors.Count < colorLabels.Count)
-                        {
-                            colorPalettes[i].colors.Add(new ColorPallete());
-                        }
-                    }
-
-                    if (colorPalettes[i].colors.Count > colorLabels.Count)
-                    {
-                        //while (colorPalettes[i].labels.Count > colorLabels.Count)
-                        //{
-                        //    colorPalettes[i].labels.RemoveAt(colorPalettes[i].labels.Count - 1);
-                        //}
-
-                        //while (colorPalettes[i].colors.Count > colorLabels.Count)
-                        //{
-                        //    colorPalettes[i].colors.RemoveAt(colorPalettes[i].colors.Count - 1);
-                        //}
-
-                        while (colorPalettes[i].colors.Count > colorLabels.Count)
-                        {
-                            colorPalettes[i].colors.RemoveAt(colorPalettes[i].colors.Count - 1);
-                        }
-                    }
-                }
-                else
-                {
-                    for (int j = 0; j < colorLabels.Count; j++)
-                    {
-                        colorPalettes[i].colors[j].label = colorLabels[j];
-                    }
-                }
-            }
-
-            so.Update();
-        }
-              
-        public void LoadCustomPalettesData()
-        {
-            if (customSetup == null)
-                return;
-
-            colorLabels.Clear();
-
-            if (customSetup.palettes.Count == 0) 
-                return;
-            
-            if (customSetup.palettes[0].colors.Count > 0)
-            {
-                for (int i = 0; i < customSetup.palettes[0].colors.Count; i++)
-                {
-                    colorLabels.Add(customSetup.palettes[0].colors[i].label);
-                }
-            }
-            
-            AssignPalettesData(customSetup);
-        }
-        
-        public void LoadDefaultPalettesData()
-        {
-            if (targetSetup == null)
-                return;
-
-            colorLabels.Clear();
-            colorAppData = ColorAppUtils.GetColorAppData();
-
-            if (colorAppData.ColorLabels.Count > 0)
-            {
-                for (int i = 0; i < colorAppData.ColorLabels.Count; i++)
-                {
-                    colorLabels.Add(colorAppData.ColorLabels[i]);
-                }
-            }
-            
-            AssignPalettesData(targetSetup);
-        }
-        
-        public void AssignPalettesData(ColorPaletteSetup setup)
-        {
-            if (setup == null)
-                return;
-
-            colorPalettes.Clear();
-
-            for (int i = 0; i < setup.palettes.Count; i++)
-            {
-                PaletteEditor paletteEditor = new PaletteEditor();
-                paletteEditor.paletteName = setup.palettes[i].paletteName;
-
-                for (int j = 0; j < setup.palettes[i].colors.Count; j++)
-                {
-                    ColorPallete NewColorPalette = new ColorPallete()
-                    {
-                        label = setup.palettes[i].colors[j].label,
-                        color = setup.palettes[i].colors[j].color
-                    };
-                    paletteEditor.colors.Add(NewColorPalette);
-                }
-
-                colorPalettes.Add(paletteEditor);
-            }
-
-            so.Update();
+            GUILayout.Space(RowGap * 0.5f);
         }
 
-        public void SavePalettesData()
+        private void DrawDiagnostics()
         {
-            if (targetSetup == null)
+            List<ColorAppDiagnostics.Mismatch> issues = ColorAppDiagnostics.Analyze(library);
+            if (issues.Count == 0)
                 return;
 
-            if(ColorAppUtils.GetColorAppData().ColorLabels == null)
-            {
-                ColorAppUtils.GetColorAppData().SetColorLabels(new List<string>());
-            }
+            EditorGUILayout.Space(2);
+            foreach (var issue in issues)
+                EditorGUILayout.HelpBox(issue.message, MessageType.Warning);
+        }
 
-            ColorAppUtils.GetColorAppData().ColorLabels.Clear();
+        private void AddPalette()
+        {
+            Undo.RecordObject(library, "Anadir paleta");
 
-            for (int i = 0; i < colorLabels.Count; i++)
-            {
-                ColorAppUtils.GetColorAppData().ColorLabels.Add(colorLabels[i]);
-            }
+            ColorPalette created = library.PaletteCount == 0
+                ? ColorAppSamplePalette.Create()
+                : new ColorPalette { displayName = "New Palette" };
 
-            targetSetup.palettes.Clear();
-            if(customSetup != null && customSetup != targetSetup)
-            {
-                customSetup.palettes.Clear();
-            }
+            library.Palettes.Add(created);
+            EditorUtility.SetDirty(library);
+            librarySO.Update();
+            selectedPalette = library.PaletteCount - 1;
+        }
 
-            for (int i = 0; i < colorPalettes.Count; i++)
-            {
-                Palette palette = new Palette();
-                string paletteName = colorPalettes[i].paletteName;
-                palette.paletteName = paletteName;
+        private void RemoveSelectedPalette()
+        {
+            if (library.PaletteCount == 0)
+                return;
 
-                //for (int j = 0; j < colorPalettes[i].labels.Count; j++)
-                //{
-                //    palette.labels.Add(colorPalettes[i].labels[j]);
-                //}
+            Undo.RecordObject(library, "Quitar paleta");
+            library.Palettes.RemoveAt(Mathf.Clamp(selectedPalette, 0, library.PaletteCount - 1));
+            EditorUtility.SetDirty(library);
+            librarySO.Update();
+            selectedPalette = Mathf.Clamp(selectedPalette, 0, Mathf.Max(0, library.PaletteCount - 1));
+            RefreshScene();
+        }
 
-                //for (int k = 0; k < colorPalettes[i].colors.Count; k++)
-                //{
-                //    palette.colors.Add(colorPalettes[i].colors[k]);
-                //}
+        private void AddSlot()
+        {
+            ColorPalette palette = library.GetPalette(selectedPalette);
+            if (palette == null)
+                return;
 
-                for (int j = 0; j < colorPalettes[i].colors.Count; j++)
-                {
-                    ColorPallete newColorPallete = new ColorPallete()
-                    {
-                        label = colorPalettes[i].colors[j].label,
-                        color = colorPalettes[i].colors[j].color
-                    };
+            Undo.RecordObject(library, "Anadir color");
+            palette.slots.Add(new ColorSlot($"color_{palette.SlotCount}", Color.white, Color.white));
+            EditorUtility.SetDirty(library);
+            librarySO.Update();
+            RefreshScene();
+        }
 
-                    palette.colors.Add(newColorPallete);
-                }
+        private void RemoveLastSlot()
+        {
+            ColorPalette palette = library.GetPalette(selectedPalette);
+            if (palette == null || palette.SlotCount == 0)
+                return;
 
-                targetSetup.palettes.Add(palette);
-                if(customSetup != null && customSetup != targetSetup)
-                {
-                    customSetup.palettes.Add(palette);
-                }
-            }
+            Undo.RecordObject(library, "Quitar color");
+            palette.slots.RemoveAt(palette.slots.Count - 1);
+            EditorUtility.SetDirty(library);
+            librarySO.Update();
+            RefreshScene();
+        }
 
-            //ColorAppUtils.GetColorAppData().SetUseCustomPalette(useCustomSetup);
-            //ColorAppUtils.GetColorAppData().SetCustomPalettePath(useCustomSetup ? AssetDatabase.GetAssetPath(targetSetup) : string.Empty);
-            so.Update();
-            EditorUtility.SetDirty(this);
-            EditorUtility.SetDirty(targetSetup);
-            if(customSetup != null)
-            {
-                EditorUtility.SetDirty(customSetup);
-            }
-            AssetDatabase.SaveAssets();
+        /// <summary>Repinta los Colorizer de la escena abierta.</summary>
+        private void RefreshScene()
+        {
+            ColorizerHandler handler = ColorizerHandler.Active;
+            if (handler != null)
+                handler.ColorizerAll();
+        }
+
+        private void DrawFooter()
+        {
+            EditorGUILayout.BeginVertical(currentGUISkin != null ? currentGUISkin.box : GUI.skin.box);
+            EditorGUILayout.BeginHorizontal(GUILayout.ExpandWidth(true));
+
+            GUILayout.Label("Created By Jairoandrety", EditorStyles.boldLabel);
+            if (GUILayout.Button("Visit Website", EditorStyles.miniButton, GUILayout.Width(150)))
+                Application.OpenURL("https://jairoandrety.wordpress.com");
+
+            EditorGUILayout.EndHorizontal();
+            EditorGUILayout.EndVertical();
         }
     }
 }
-#endif

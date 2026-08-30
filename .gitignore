@@ -1,0 +1,18 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+
+# IDE
+.vs/
+.idea/
+*.csproj
+*.sln
+*.user
+
+# Unity-generated (irrelevant for a package repo with no host project checked in)
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/

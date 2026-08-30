@@ -1,9 +1,9 @@
 ﻿{
   "name": "com.jairoandrety.colorapp",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "displayName": "Color App",
   "description": "Useful tool that helps create, modify and manage color palettes or color themes to assign to scenes",
-  "unity": "2017.1",
+  "unity": "2021.3",
  "keywords":
  [
     "Themes",
