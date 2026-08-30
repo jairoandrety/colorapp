@@ -1,32 +1,34 @@
 <h1 align="center">
-<img src="./Editor/Resources/Images/ColorAppIcon.png" alt="SixLabors.ImageSharp" width="600"/>
+<img src="./Editor/Resources/Images/ColorAppIcon.png" alt="ColorApp" width="600"/>
 <br/>
 ColorApp
 </h1>
 
 Forum Thread: https://forum.unity.com/threads/color-app-plugin-open-source.1557404/
 
-## What is CalorApp
-Custom editor tool for Unity 3D that allows you to create and edit color palettes and apply them to graphics in your project
+## What is ColorApp
+Custom editor tool for Unity that lets you create and edit color palettes and apply them to graphics in your project.
 
-Welcome to the ColorApp Unity Package documentation. This package provides a simple tool for creating and managing color palettes in Unity, allowing you to easily assign colors to various elements in your game or app.
+Each color in a palette has two variants (Light/Dark by default, renamable per palette), so a single palette can hold both your normal and dark appearance instead of needing two.
 
 ## Getting Started
-* The first step is to open the color palette editor, **Window/ColorApp/ColorAppEditor** in this panel you can manage the color palettes.
+Open the palette editor from **Window/ColorApp/ColorAppEditor**. If your project has no palette library yet, the window offers to create one — start from the built-in sample palette or an empty one, or migrate assets from ColorApp 1.x if you already have some.
 
-## Creating color palettes:
-To create color palettes you must assign a configuration file, you can create one or use the default file.
-* Create a list of color labels.
-* Add a palette to the palette list and give it a name.
+## Creating color palettes
+A `ColorPaletteLibrary` asset holds every palette in your project. Each palette is independent: it defines its own set of colors (no shared label list to keep in sync across palettes). For each color you set:
+* A **key** — its identifier, e.g. `main_color` or `background`.
+* A **Primary** and a **Secondary** value — typically Light and Dark, but each palette can rename its two variants.
 
-## Managing Color Palettes
-* To modify the color palettes you can load the data from the configuration file by pressing the LoadPalette button.
-* To save the created data to the configuration file, press the Save Palettes button.
+Use the **+** / **-** buttons to add or remove palettes, and **Anadir color** / **Quitar ultimo** to manage a palette's colors. Changes apply immediately; there is no separate load/save step.
 
 ## Assigning Color Palettes
-* Add an element to the scene and assign the **ColorizerHandler** script and select the color palette you want to apply.
-* To assign color palettes you must assign one of the Colorizer type scripts to a Canvas, Sprite renderer or modeling element and choose the color label you want to apply.
-* Again in the **ColorizerHandler** script Press the **Colorizer All** button or you can call this function from some external code at runtime
+* Add a **ColorizerHandler** to a GameObject in your scene. It selects which palette is active for that scene (and, optionally, a `ColorPaletteLibrary` to use, so a build doesn't need the asset in a `Resources` folder).
+* Add one of the **Colorizer** components (`ColorizerCanvas`, `ColorizerSpriteRenderer`, `ColorizerRenderer`) to a Canvas graphic, Sprite Renderer, or 3D renderer, and pick which color index it should use.
+* A Colorizer can also **override** its color directly, with its own Primary/Secondary pair, instead of following the palette.
+* Call `ColorizerHandler.ColorizerAll()` — from its inspector button, or from your own code at runtime — to recolor everything at once. Toggling `ColorizerHandler.ActiveVariant` (Primary/Secondary) switches every Colorizer in the scene between the two variants, e.g. for a light/dark mode switch.
+
+## Upgrading from 1.x
+ColorApp 2.0 changes the palette format (see [CHANGELOG.md](./CHANGELOG.md)). Your existing `ColorPaletteSetup`/`ColorAppData` assets keep working and are never modified automatically — open **Window/ColorApp/ColorAppEditor** and use **Migrar assets antiguos** to convert them into a `ColorPaletteLibrary`. Colorizer components keep pointing at the same color index, so scenes and prefabs don't need to be touched.
 
 ## Support and Contact
 For further assistance or inquiries, please contact our support team at jairoandrety@hotmail.com
@@ -34,6 +36,6 @@ For further assistance or inquiries, please contact our support team at jairoand
 ## Examples
 
 <p float="left">
-  <img src="./Samples/Images/Examples/Light.jpg" width="400" />
-  <img src="/Samples/Images/Examples/Dark.jpg" width="400" /> 
+  <img src="./Samples~/Demo/Images/Examples/Light.jpg" width="400" />
+  <img src="./Samples~/Demo/Images/Examples/Dark.jpg" width="400" />
 </p>

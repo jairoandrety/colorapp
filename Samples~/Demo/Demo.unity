@@ -170,7 +170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -214,7 +214,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 5
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &98408818
 GameObject:
   m_ObjectHideFlags: 0
@@ -428,7 +429,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 3
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &160431602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -442,7 +444,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -605,7 +607,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 0
     overrideColor: 0
-    customColor: {r: 1, g: 0, b: 0, a: 1}
+    overridePrimary: {r: 1, g: 0, b: 0, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &289056231
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -814,7 +817,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 1
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &545046647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -906,7 +910,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 3
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &557115373
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -920,7 +925,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1060,7 +1065,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 1
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &625828357
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1152,7 +1158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1196,7 +1202,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 5
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &677814846
 GameObject:
   m_ObjectHideFlags: 0
@@ -1251,7 +1258,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 1
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &677814849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1344,7 +1352,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 1
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &701506309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1436,7 +1445,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 3
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &736068698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1450,7 +1460,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1569,7 +1579,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 2
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &780121831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1695,7 +1706,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1739,7 +1750,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 3
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &865358839
 GameObject:
   m_ObjectHideFlags: 0
@@ -1835,7 +1847,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 4
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &884126923
 GameObject:
   m_ObjectHideFlags: 0
@@ -1889,7 +1902,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 2
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &884126926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2021,7 +2035,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 1
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &914077204
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2111,7 +2126,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2157,7 +2172,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 3
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &922548789
 GameObject:
   m_ObjectHideFlags: 0
@@ -2212,7 +2228,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 1
     overrideColor: 0
-    customColor: {r: 0.7830189, g: 0.32133323, b: 0.32133323, a: 1}
+    overridePrimary: {r: 0.7830189, g: 0.32133323, b: 0.32133323, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &922548792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2306,7 +2323,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 1
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &943333673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2399,7 +2417,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 0
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &998009616
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2492,7 +2511,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 0
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1015370461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2651,7 +2671,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 1
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1086598546
 GameObject:
   m_ObjectHideFlags: 0
@@ -2773,7 +2794,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 3
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1092531946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2787,7 +2809,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3156,7 +3178,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3200,7 +3222,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 5
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1207527492
 GameObject:
   m_ObjectHideFlags: 0
@@ -3254,7 +3277,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 4
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1207527495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3432,7 +3456,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 2
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1270904945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3522,7 +3547,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3566,7 +3591,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 3
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1291253136
 GameObject:
   m_ObjectHideFlags: 0
@@ -3644,6 +3670,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -3722,7 +3749,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 2
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1310085685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3852,7 +3880,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 0
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1342098132
 GameObject:
   m_ObjectHideFlags: 0
@@ -3987,7 +4016,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 2
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1427883969
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4116,7 +4146,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 4
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1475058742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4212,7 +4243,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 3
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1505448348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4226,7 +4258,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4416,7 +4448,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 0
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1578332850
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4487,6 +4520,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   colorizerHandlerData:
     colorPaletteSelected: 0
+  library: {fileID: 11400000, guid: 5f2ec375a9bdb7448a82182be57ff57d, type: 2}
+  activeVariant: 1
 --- !u!4 &1635300866
 Transform:
   m_ObjectHideFlags: 0
@@ -4569,7 +4604,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 3
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1747280027
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4583,7 +4619,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4663,7 +4699,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4707,7 +4743,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 5
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1780374290
 GameObject:
   m_ObjectHideFlags: 0
@@ -4759,7 +4796,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4799,7 +4836,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 5
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1810623592
 GameObject:
   m_ObjectHideFlags: 0
@@ -4853,7 +4891,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 3
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1810623595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4867,7 +4906,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4951,7 +4990,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 1
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1822263302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5044,7 +5084,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 0
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1847288596
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5173,7 +5214,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 1
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1973769694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5307,7 +5349,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 0
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1990192465
 GameObject:
   m_ObjectHideFlags: 0
@@ -5400,7 +5443,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 2
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &2023685466
 GameObject:
   m_ObjectHideFlags: 0
@@ -5454,7 +5498,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 3
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &2023685469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5468,7 +5513,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5550,7 +5595,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 3
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &2027378163
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5564,7 +5610,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5738,7 +5784,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 1
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &2089264175
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5830,7 +5877,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 3
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &2118117490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5844,7 +5892,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5926,7 +5974,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 4
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &2124698683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6101,7 +6150,8 @@ MonoBehaviour:
   colorizerData:
     selectedIndex: 4
     overrideColor: 0
-    customColor: {r: 1, g: 1, b: 1, a: 1}
+    overridePrimary: {r: 1, g: 1, b: 1, a: 1}
+    overrideSecondary: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

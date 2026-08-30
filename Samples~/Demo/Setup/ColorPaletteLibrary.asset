@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32ae55427f85a2845806a88ddd295271, type: 3}
+  m_Name: ColorPaletteLibrary
+  m_EditorClassIdentifier: ColorApp::Jairoandrety.ColorApp.ColorPaletteLibrary
+  _palettes:
+  - displayName: Normal
+    primaryVariantName: Normal
+    secondaryVariantName: Dark
+    slots:
+    - key: PrimaryColor
+      primary: {r: 0.9960785, g: 0.627451, b: 0, a: 1}
+      secondary: {r: 0.9960785, g: 0.627451, b: 0, a: 1}
+    - key: SecondColor
+      primary: {r: 0.90196085, g: 0.90196085, b: 0.90196085, a: 1}
+      secondary: {r: 0.90196085, g: 0.90196085, b: 0.90196085, a: 1}
+    - key: ThirdColor
+      primary: {r: 1, g: 0.7254902, b: 0.27450982, a: 1}
+      secondary: {r: 1, g: 0.7254902, b: 0.27450982, a: 1}
+    - key: PrimaryFontColor
+      primary: {r: 0.19607845, g: 0.19607845, b: 0.19607845, a: 1}
+      secondary: {r: 1, g: 1, b: 1, a: 1}
+    - key: SecondFontColor
+      primary: {r: 0.9960785, g: 0.627451, b: 0, a: 1}
+      secondary: {r: 0.9960785, g: 0.627451, b: 0, a: 1}
+    - key: Background
+      primary: {r: 1, g: 1, b: 1, a: 1}
+      secondary: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  _defaultPaletteIndex: 0
+  _defaultVariant: 0

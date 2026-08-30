@@ -9,146 +9,98 @@ namespace Jairoandrety.ColorApp
 {
     public static class ColorAppUtils
     {
-        private static string _resourcePath = "Assets/Resources";
-        private static string _colorAppDataPath = "ColorAppData";
-        private static string _defaultPalettePath = "PaletteTargetSetup";
-        
-        //public static bool ValidatePaletteSetup()
-        //{
-        //    return Resources.Load<ColorPaletteSetup>(_defaultPalettePath) != null;
-        //}
+        private static ColorPaletteLibrary _cachedLibrary;
 
-        public static ColorPaletteSetup GetColorPaletteSetup()
+        /// <summary>
+        /// Referencia usada en runtime. La asigna el ColorizerHandler desde su
+        /// campo serializado, de modo que una build no necesita carpeta Resources.
+        /// </summary>
+        public static void SetLibrary(ColorPaletteLibrary library)
         {
-            VerifyResourcesFolder();
-            ColorPaletteSetup paletteLoaded = Resources.Load<ColorPaletteSetup>(_defaultPalettePath);
+            if (library != null)
+                _cachedLibrary = library;
+        }
+
+        /// <summary>
+        /// Devuelve la libreria de paletas del proyecto, o null si todavia no
+        /// existe ninguna. Nunca crea el asset: la creacion es siempre explicita
+        /// (migracion o boton del editor), porque crear assets durante un OnGUI
+        /// dispara un reimport en mitad del repintado.
+        /// </summary>
+        public static ColorPaletteLibrary GetLibrary()
+        {
+            if (_cachedLibrary != null)
+                return _cachedLibrary;
+
 #if UNITY_EDITOR
-            if (paletteLoaded == null)
+            string[] guids = AssetDatabase.FindAssets("t:ColorPaletteLibrary");
+            if (guids.Length > 0)
             {
-                paletteLoaded = CreatePaletteSetup();
+                string path = AssetDatabase.GUIDToAssetPath(guids[0]);
+                _cachedLibrary = AssetDatabase.LoadAssetAtPath<ColorPaletteLibrary>(path);
+
+                if (guids.Length > 1)
+                {
+                    Debug.LogWarning($"[ColorApp] Se encontraron {guids.Length} assets ColorPaletteLibrary en el proyecto. " +
+                                     $"Se usara '{path}'. Conviene dejar solo uno.");
+                }
             }
+#else
+            _cachedLibrary = Resources.Load<ColorPaletteLibrary>("ColorPaletteLibrary");
 #endif
-            return paletteLoaded;
-        }
-        
-        public static ColorPaletteSetup CreatePaletteSetup()
-        {
-            VerifyResourcesFolder();
-            ColorPaletteSetup newPalette = ScriptableObject.CreateInstance<ColorPaletteSetup>();
-            AssetDatabase.CreateAsset(newPalette, string.Format("{0}/{1}.asset", _resourcePath, _defaultPalettePath));
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-            return newPalette; 
+            return _cachedLibrary;
         }
 
-        public static void VerifyResourcesFolder()
+        /// <summary>Fuerza a que la proxima llamada a GetLibrary vuelva a buscar.</summary>
+        public static void InvalidateLibraryCache()
         {
-            bool folderResourcesExist = Directory.Exists(_resourcePath);
-            if (!folderResourcesExist)
-            {
-                Directory.CreateDirectory(_resourcePath);
-            }
+            _cachedLibrary = null;
         }
 
-        //public static void SaveColorPaletteSetup(ColorPaletteSetup colorPaletteSetup)
-        //{
-        //    if (colorPaletteSetup != null)
-        //    {
-        //        ColorPaletteSetup paleteLoaded = Resources.Load<ColorPaletteSetup>("PaletteTargetSetup");
-        //        if (paleteLoaded != null)
-        //        {
-        //            paleteLoaded.palettes = colorPaletteSetup.palettes;
-        //            paleteLoaded.colorLabels = colorPaletteSetup.colorLabels;
-        //        }
-        //        else
-        //        {
-        //            paleteLoaded = ScriptableObject.CreateInstance<ColorPaletteSetup>();
-        //            paleteLoaded.palettes = colorPaletteSetup.palettes;
-        //            paleteLoaded.colorLabels = colorPaletteSetup.colorLabels;
-        //        }
-
-        //        AssetDatabase.CreateAsset(paleteLoaded, "Assets/Resources/PaletteTargetSetup.asset");
-        //        AssetDatabase.SaveAssets();
-        //        AssetDatabase.Refresh();
-        //    }
-        //}
-
-        public static ColorAppData GetColorAppData()
+        public static bool HasLibrary()
         {
-            VerifyResourcesFolder();
-            ColorAppData colorAppDataLoaded = Resources.Load<ColorAppData>(_colorAppDataPath);
-#if UNITY_EDITOR
-            if (colorAppDataLoaded == null)
-            {
-                colorAppDataLoaded = CreateColorAppData();
-            }
-#endif
-            return colorAppDataLoaded;
+            ColorPaletteLibrary library = GetLibrary();
+            return library != null && library.HasPalettes;
         }
-        
-#if UNITY_EDITOR
-        public static ColorAppData CreateColorAppData()
+
+        public static List<string> PaletteNames()
         {
-            VerifyResourcesFolder();
-            ColorAppData newColorAppData = ScriptableObject.CreateInstance<ColorAppData>();
-            AssetDatabase.CreateAsset(newColorAppData, string.Format("{0}/{1}.asset", _resourcePath, _colorAppDataPath));
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-            return newColorAppData;
+            ColorPaletteLibrary library = GetLibrary();
+            return library != null ? library.PaletteNames() : new List<string>();
         }
-#endif
-        
-        //public static ColorAppData GetColorAppDataFromPath(string path)
-        //{
-            //string pathInAssetFolder = "Assets/ColorApp/";
-            //string pathInPackages = "Packages/com.jairoandrety.colorapp/";
-            //ColorAppData objInPackeages = AssetDatabase.LoadAssetAtPath<ColorAppData>(pathInPackages + path);
-            //ColorAppData objInAssetFolder = AssetDatabase.LoadAssetAtPath<ColorAppData>(pathInAssetFolder + path);
-            //return objInPackeages != null ? objInPackeages : objInAssetFolder;
-        //}
+
+        /// <summary>
+        /// Keys de la paleta indicada. Sustituye a la antigua ColorLabels(), que
+        /// devolvia una lista global compartida por todas las paletas.
+        /// </summary>
+        public static List<string> SlotKeys(int paletteIndex)
+        {
+            ColorPaletteLibrary library = GetLibrary();
+            if (library == null)
+                return new List<string>();
+
+            ColorPalette palette = library.GetPalette(paletteIndex);
+            return palette != null ? palette.SlotKeys() : new List<string>();
+        }
+
+        /// <summary>Keys de la paleta marcada como activa en la libreria.</summary>
+        public static List<string> DefaultPaletteSlotKeys()
+        {
+            ColorPaletteLibrary library = GetLibrary();
+            return library != null ? SlotKeys(library.DefaultPaletteIndex) : new List<string>();
+        }
 
         public static string GetPackagePath()
         {
             string pathInAssetFolder = "Assets/ColorApp/";
             string pathInPackages = "Packages/com.jairoandrety.colorapp/";
-            
-            if(Directory.Exists(pathInAssetFolder))
+
+            if (Directory.Exists(pathInAssetFolder))
                 return pathInAssetFolder;
             else if (Directory.Exists(pathInPackages))
                 return pathInPackages;
             else
                 return null;
-        }
-        
-        public static List<string> ColorLabels()
-        {
-            List<string> labels = new List<string>();
-            if (GetColorAppData().ColorLabels != null)
-            {
-                if (GetColorAppData().ColorLabels.Count > 0)
-                {
-                    foreach (var item in GetColorAppData().ColorLabels)
-                    {
-                        labels.Add(item);
-                    }
-                }
-            }
-
-            return labels;
-        }
-
-        public static List<string> PaletteNames()
-        {
-            List<string> names = new List<string>();
-            ColorPaletteSetup colorPaletteSetup = GetColorPaletteSetup();
-            if (colorPaletteSetup != null)
-            {
-                foreach (var item in colorPaletteSetup.palettes)
-                {
-                    names.Add(item.paletteName);
-                }
-            }
-            return names;
         }
     }
 }
